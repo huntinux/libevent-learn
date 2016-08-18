@@ -1,3 +1,15 @@
+/**
+ * Group Chat Server
+ *
+ * bufferevent presents one connection.
+ *
+ * Compile;
+ * $ g++ chat.cc -levent
+ *
+ * hongjin.cao
+ * chj90220@126.com
+ */
+
 #include <event2/listener.h>
 #include <event2/bufferevent.h>
 #include <event2/buffer.h>
@@ -6,19 +18,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-
-//#include <vector>
-//std::vector<bufferevent*> clients;
-//
-
 #include <set>
 #include <iostream>
 #include <string>
+
 std::set<bufferevent*> clients;
-
-//struct bufferevent* clients[16];
-//unsigned int idx = 0;
-
 void broadcast_message(struct bufferevent *from, struct evbuffer *message)
 {
     size_t buffer_len = evbuffer_get_length(message);
@@ -72,7 +76,6 @@ accept_conn_cb(struct evconnlistener *listener,
     bufferevent_enable(bev, EV_READ|EV_WRITE);
 
     /* Record all connection */
-    //clients.push_back(bev);
     clients.insert(bev);
 }
 
@@ -120,6 +123,8 @@ int main(int argc, char **argv)
     if (!listener) {
         perror("Couldn’t create listener");
         return 1;
+    } else {
+        printf("Listen on: %d\n", port);
     }
     evconnlistener_set_error_cb(listener, accept_error_cb);
     event_base_dispatch(base);
